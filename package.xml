@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<package packagerversion="1.7.1" version="2.0" xmlns="http://pear.php.net/dtd/package-2.0" xmlns:tasks="http://pear.php.net/dtd/tasks-1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://pear.php.net/dtd/tasks-1.0 http://pear.php.net/dtd/tasks-1.0.xsd  http://pear.php.net/dtd/package-2.0 http://pear.php.net/dtd/package-2.0.xsd">
+ <name>sfDoctrineApplyPlugin</name>
+ <channel>pear.symfony-project.com</channel>
+ <summary>Allows users to apply for accounts</summary>
+ <description>Allows users of a site protected by sfGuardPlugin to create new accounts, verifying them by email. Both account creation and password changes require email verification as a speed bump to slow down spammers.</description>
+ <lead>
+  <name>Tom Boutell</name>
+  <user>boutell</user>
+  <email>tom@punkave.com</email>
+  <active>yes</active>
+ </lead>
+ <date>2009-02-07</date>
+ <time>15:27:00</time>
+ <version>
+  <release>0.7.2</release>
+  <api>0.7.2</api>
+ </version>
+ <stability>
+  <release>beta</release>
+  <api>beta</api>
+ </stability>
+ <license uri="http://www.symfony-project.com/license">MIT license</license>
+ <notes>-</notes>
+ <contents>
+  <dir name="/">
+   <dir name="lib">
+    <dir name="form">
+     <file role="data" name="sfApplyApplyForm.class.php" />
+     <file role="data" name="sfApplyResetForm.class.php" />
+     <file role="data" name="sfApplyResetRequestForm.class.php" />
+     <file role="data" name="sfApplySettingsForm.class.php" />
+    </dir>
+   </dir>
+   <file role="data" name="LICENSE" />
+   <dir name="modules">
+    <dir name="sfApply">
+     <dir name="actions">
+      <file role="data" name="actions.class.php" />
+      <file role="data" name="components.class.php" />
+     </dir>
+     <dir name="config">
+      <file role="data" name="mailer.yml" />
+      <file role="data" name="security.yml" />
+     </dir>
+     <dir name="lib">
+      <file role="data" name="BasesfApplyActions.class.php" />
+      <file role="data" name="BasesfApplyComponents.class.php" />
+     </dir>
+     <dir name="templates">
+      <file role="data" name="_login.php" />
+      <file role="data" name="_loginPrompt.php" />
+      <file role="data" name="_logoutPrompt.php" />
+      <file role="data" name="_sendValidateNew.php" />
+      <file role="data" name="_sendValidateNewText.php" />
+      <file role="data" name="_sendValidateReset.php" />
+      <file role="data" name="_sendValidateResetText.php" />
+      <file role="data" name="applyAfter.php" />
+      <file role="data" name="applyMailerError.php" />
+      <file role="data" name="applySuccess.php" />
+      <file role="data" name="confirmInvalid.php" />
+      <file role="data" name="confirmSuccess.php" />
+      <file role="data" name="resetAfter.php" />
+      <file role="data" name="resetRequestAfter.php" />
+      <file role="data" name="resetRequestSuccess.php" />
+      <file role="data" name="resetSuccess.php" />
+      <file role="data" name="settingsSuccess.php" />
+     </dir>
+     <dir name="validate">
+      <file role="data" name="apply.yml" />
+      <file role="data" name="reset.yml" />
+      <file role="data" name="settings.yml" />
+     </dir>
+    </dir>
+   </dir>
+   <file role="data" name="package.xml" />
+   <file role="data" name="README" />
+   <dir name="web">
+    <dir name="css">
+     <file role="data" name="login-apply.css" />
+    </dir>
+   </dir>
+  </dir>
+ </contents>
+ <dependencies>
+  <required>
+   <php>
+    <min>5.0.0</min>
+   </php>
+   <pearinstaller>
+    <min>1.4.1</min>
+   </pearinstaller>
+   <package>
+    <name>symfony</name>
+    <channel>pear.symfony-project.com</channel>
+    <min>1.0.0</min>
+    <max>1.1.0</max>
+    <exclude>1.1.0</exclude>
+   </package>
+   <package>
+    <name>sfGuardPlugin</name>
+    <channel>pear.symfony-project.com</channel>
+    <min>1.1.15</min>
+    <max>2.0.0</max>
+    <exclude>2.0.0</exclude>
+   </package>
+  </required>
+ </dependencies>
+ <phprelease />
+ <changelog />
+</package>
