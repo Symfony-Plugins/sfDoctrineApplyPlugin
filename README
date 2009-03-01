@@ -49,11 +49,11 @@ Then add the following to your `doctrine/schema.yml`:
           type: integer(4)
           notnull: true
         email:
-          type: varchar(80)
+          type: string(80)
         fullname:
-          type: varchar(80)
+          type: string(80)
         validate:
-          type: varchar(17)
+          type: string(17)
       # Don't forget this!
       relations:
         User:
@@ -141,12 +141,14 @@ Activate the `sfApply` module in your application's
 Note that you also need the `sfGuardAuth` module to enable logins.
 
 Configure the "from" address and full name for email messages sent by
-sfDoctrineApplyPlugin in your `app.yml` file:
+sfDoctrineApplyPlugin in your `app.yml` file. Note that the key is
+sfApplyPlugin, not sfDoctrineApplyPlugin, for compatibility with other versions:
 
-      sfDoctrineApplyPlugin:
+      sfApplyPlugin:
         from:
           email: "your@emailaddress.com"
           fullname: "the staff at yoursite.com"
+
 
 *Important: sfDoctrineApplyPlugin will not work* unless you configure these
 options! The plugin will fail with a less than informative error message
@@ -154,8 +156,33 @@ options! The plugin will fail with a less than informative error message
 My apologies for leaving this rather important information out of the
 documentation of the earliest versions.
 
-Now you can easily add a link to your pages sending users to
-`sfApply/apply` to request accounts:
+SwiftMailer supports several means of delivery. By default, 
+sfDoctrineApplyPlugin uses the NativeMail back end. If this is not what
+you want, you can specify a different SwiftMailer back end:
+
+      sfApplyPlugin:
+        from:
+          email: "your@emailaddress.com"
+          fullname: "the staff at yoursite.com"
+        mailer_type: "SMTP"
+
+If you are using the SMTP backend, you can also enable encryption and
+specify a mailer host and port:
+
+      sfApplyPlugin:
+        from:
+          email: "your@emailaddress.com"
+          fullname: "the staff at yoursite.com"
+        mailer_type: "SMTP"
+        mailer_smtp_encryption: true
+        mailer_host: my.mailer.host
+        mailer_port: 25
+
+For a complete list of connection classes supported by SwiftMailer, 
+see the [SwiftMailer documentation](http://www.swiftmailer.org/wikidocs/).
+
+Now that you have configured the plugin, you can easily add a link to your 
+pages sending users to `sfApply/apply` to request accounts:
 
     echo link_to("Create Account", "sfApply/apply");
 
@@ -201,10 +228,10 @@ of the `__` function.
 
 You probably have pages on which logging in is optional. It's nice to
 display a login prompt directly on these pages. If you want to do that,
-try including my login/logout prompt template from your
+try including my login/logout prompt component from your
 `apps/frontend/templates/layout.php` file:
 
-    <?php include_partial('sfApply/login') ?>
+    <?php include_component('sfApply', 'login') ?>
 
 If you are using the provided stylesheet, the login prompt will
 be floated at the far right, so you'll want to emit this code
@@ -284,7 +311,7 @@ and tell sfDoctrineApplyPlugin to use your subclasses instead
 via `app.yml`:
 
     all:
-      sfDoctrineApplyPlugin:
+      sfApplyPlugin:
         # Application form class
         sfDoctrineApplyApplyForm_class: myApplyFormClass
         # Settings form class
@@ -349,7 +376,26 @@ further information about his work.
 
 ## Changelog ##
 
-### Versions 0.71 and 0.72 ###
+### Version 0.75 ###
+
+One more stray reference to sfDoctrineApplyPlugin: as an app.yml key
+in the documentation. Fixed.
+
+### Version 0.74 ###
+
+Thanks to Christian Schaefer for pointing out the following
+documentation errors:
+
+* References to varchar in the recommended schema, which should be string.
+* Example of using the login component erroneously includes it as a partial.
+* Documentation refers to sfDoctrineApplyPlugin: as a key in app.yml.
+For backwards compatibility we use sfApplyPlugin: as a key in app.yml.
+
+Thanks to Nicolas Massaviol for pointing out this one:
+
+* Documentation now covers how to more fully configure SwiftMailer.
+
+### Versions 0.71, 0.72 and 0.73 ###
 
 Minor documentation issues.
 
