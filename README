@@ -376,6 +376,11 @@ further information about his work.
 
 ## Changelog ##
 
+### Version 0.76 ###
+
+package.xml now references sfDoctrineGuardPlugin rather than
+sfGuardPlugin.
+
 ### Version 0.75 ###
 
 One more stray reference to sfDoctrineApplyPlugin: as an app.yml key
