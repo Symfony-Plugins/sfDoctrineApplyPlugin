@@ -10,15 +10,15 @@
   <email>tom@punkave.com</email>
   <active>yes</active>
  </lead>
- <date>2009-03-03</date>
- <time>02:00:00</time>
+ <date>2009-03-06</date>
+ <time>22:10:00</time>
  <version>
-  <release>0.7.6</release>
-  <api>0.7.6</api>
+  <release>1.0.2</release>
+  <api>1.0.0</api>
  </version>
  <stability>
-  <release>beta</release>
-  <api>beta</api>
+  <release>stable</release>
+  <api>stable</api>
  </stability>
  <license uri="http://www.symfony-project.com/license">MIT license</license>
  <notes>-</notes>
@@ -73,7 +73,6 @@
      </dir>
     </dir>
    </dir>
-   <file role="data" name="package.xml" />
    <file role="data" name="README" />
    <dir name="web">
     <dir name="css">
@@ -99,7 +98,7 @@
    </package>
    <package>
     <name>sfDoctrineGuardPlugin</name>
-    <channel>pear.symfony-project.com</channel>
+    <channel>plugins.symfony-project.org</channel>
     <min>3.0.0</min>
     <max>4.0.0</max>
     <exclude>4.0.0</exclude>
@@ -107,5 +106,45 @@
   </required>
  </dependencies>
  <phprelease />
- <changelog />
+ <changelog>
+  <release>
+    <version>
+      <release>1.0.2</release>
+      <api>1.0.0</api>
+    </version>
+    <stability>
+      <release>stable</release>
+      <api>stable</api>
+    </stability>
+    <license uri="http://www.symfony-project.org/license">MIT license</license>
+    <date>2009-03-06</date>
+    <notes>Just fixing package.xml issues.</notes>
+  </release>
+  <release>
+    <version>
+      <release>1.0.1</release>
+      <api>1.0.0</api>
+    </version>
+    <stability>
+      <release>stable</release>
+      <api>stable</api>
+    </stability>
+    <license uri="http://www.symfony-project.org/license">MIT license</license>
+    <date>2009-03-06</date>
+    <notes>Corrected reference to sfDoctrineGuardPlugin (for real this time).</notes>
+  </release>
+  <release>
+    <version>
+      <release>1.0.0</release>
+      <api>1.0.0</api>
+    </version>
+    <stability>
+      <release>stable</release>
+      <api>stable</api>
+    </stability>
+    <license uri="http://www.symfony-project.org/license">MIT license</license>
+    <date>2009-03-06</date>
+    <notes>First stable release. All recent changes have been related to documentation or packaging.</notes>
+  </release>
+ </changelog>
 </package>

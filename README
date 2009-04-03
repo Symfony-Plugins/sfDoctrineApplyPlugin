@@ -376,6 +376,21 @@ further information about his work.
 
 ## Changelog ##
 
+### Version 1.02 ###
+
+More package.xml stuff. 
+
+### Version 1.01 ###
+
+Corrected a minor packaging issue.
+
+### Version 1.0 ###
+
+package.xml updated to correctly reference sfDoctrineGuardPlugin.
+
+No code changes or bug reports on anything other than documentation
+and packaging for quite a while, so I'm declaring it 1.0 stable.
+
 ### Version 0.76 ###
 
 package.xml now references sfDoctrineGuardPlugin rather than
