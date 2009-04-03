@@ -252,7 +252,7 @@ class BasesfApplyActions extends sfActions
       $encryption = sfConfig::get('app_sfApplyPlugin_mailer_smtp_encryption', false);
       if ($encryption !== false)
       {
-        $encryption = constant('Swift_Connection_SMTP', $encryption);
+        $encryption = constant("Swift_Connection_SMTP::$encryption");
       }
       else
       {
