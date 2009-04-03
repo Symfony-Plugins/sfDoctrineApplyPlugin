@@ -258,9 +258,18 @@ class BasesfApplyActions extends sfActions
       {
         $encryption = null;
       }
+      $port = sfConfig::get('app_sfApplyPlugin_mailer_port', null);
+
+      // Allow use of constants like PORT_SECURE in app.yml
+
+      if ((!is_null($port)) && (!preg_match("/^\d+$/", $port)))
+      {
+        $port = constant("Swift_Connection_SMTP::$port");
+      }
+
       $connection = new Swift_Connection_SMTP(
         sfConfig::get('app_sfApplyPlugin_mailer_host', null),
-        sfConfig::get('app_sfApplyPlugin_mailer_port', null),
+        $port,
         $encryption);
     }
     $username = sfConfig::get('app_sfApplyPlugin_mailer_smtp_username', false);
