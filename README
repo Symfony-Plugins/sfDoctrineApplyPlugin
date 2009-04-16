@@ -288,7 +288,7 @@ Of course, in the real world, the automatically generated forms usually
 aren't quite good enough. This isn't a problem because you can easily
 add additional code to the `configure` method of your own 
 `sfGuardUserProfileForm` class. Look at your application's
-`lib/forms/sfGuardUserProfileForm.class.php` file and you'll
+`lib/form/doctrine/sfGuardUserProfileForm.class.php` file and you'll
 see that the configure method is there waiting for you.
 
 Common changes here include removing fields the user should not
