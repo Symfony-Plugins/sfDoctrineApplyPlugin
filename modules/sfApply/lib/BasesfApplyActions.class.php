@@ -86,12 +86,11 @@ class BasesfApplyActions extends sfActions
     $profile = $user->getProfile();
     $profile->setValidate('r' . self::createGuid());
     $profile->save();
+
     // Create the mailer and message objects
     $mailer = $this->getMailer();
-    $message = new Swift_Message(
-      sfConfig::get('app_sfApplyPlugin_reset_subject',
-      "Please verify your password reset request on " . 
-        $this->getRequest()->getHost()));
+    $message = new Swift_Message(sfConfig::get('app_sfApplyPlugin_reset_subject', sfContext::getInstance()->getI18N()->__("Please verify your password reset request on %1%", array('%1%' => $this->getRequest()->getHost()))));
+
     // Render message parts
     $mailContext = array('name' => $profile->getFullname(),
       'validate' => $profile->getValidate());
@@ -110,7 +109,7 @@ class BasesfApplyActions extends sfActions
     {
       throw new Exception('app_sfApplyPlugin_from is not set');
     }
-    $address = new Swift_Address($from['email'], $from['fullname']);
+    $address = new Swift_Address($from['email'], sfContext::getInstance()->getI18N()->__($from['fullname']));
     return $address;
   }
 
