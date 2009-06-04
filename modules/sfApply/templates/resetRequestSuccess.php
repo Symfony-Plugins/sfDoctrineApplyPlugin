@@ -3,7 +3,7 @@
 <?php end_slot() ?>
 <div class="sf_apply sf_apply_reset_request">
 <form method="POST" action="<?php echo url_for('sfApply/resetRequest') ?>"
-  name="sf_apply_reset_request" "id" = "sf_apply_reset_request">
+  name="sf_apply_reset_request" id="sf_apply_reset_request">
 <p>
 <?php echo __(<<<EOM
 Forgot your password? No problem! Just enter your username and
