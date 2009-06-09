@@ -149,6 +149,12 @@ sfApplyPlugin, not sfDoctrineApplyPlugin, for compatibility with other versions:
           email: "your@emailaddress.com"
           fullname: "the staff at yoursite.com"
 
+sfDoctrineApplyPlugin is fully internationalized. As a consequence you'll need
+to turn on i18n support in settings.yml if you have not already done so:
+
+    all:
+      .settings:
+        i18n: on  
 
 *Important: sfDoctrineApplyPlugin will not work* unless you configure these
 options! The plugin will fail with a less than informative error message
@@ -306,18 +312,18 @@ In some cases, you may wish to make changes that take effect
 *after* the changes that are made by the settings and application
 forms. This is especially true if you want them to behave differently
 with respect to your new fields. To do that, subclass
-the sfDoctrineApplyApplyForm and sfDoctrineApplySettingsForm classes,
+the sfApplyApplyForm and sfApplySettingsForm classes,
 and tell sfDoctrineApplyPlugin to use your subclasses instead
 via `app.yml`:
 
     all:
       sfApplyPlugin:
         # Application form class
-        sfDoctrineApplyApplyForm_class: myApplyFormClass
+        sfApplyApplyForm_class: myApplyFormClass
         # Settings form class
-        sfDoctrineApplySettingsForm_class: mySettingsFormClass
+        sfApplySettingsForm_class: mySettingsFormClass
         # Password reset form class
-        sfDoctrineApplyResetForm_class: myResetFormClass
+        sfApplyResetForm_class: myResetFormClass
 
 If you subclass our form classes, *be sure to call*
 `parent::configure()` at the beginning of *your* configure method.
@@ -328,7 +334,7 @@ as it just creates more work for you.
 
 *Note*: subclassing forms that use postvalidators is a bit tricky if you
 need to add postvalidators of your own. Here is one good way to do it,
-taken from our sfDoctrineApplyApplyForm class:
+taken from our sfApplyApplyForm class:
 
     $schema = $this->validatorSchema;
     // Grab the existing postvalidator
@@ -375,6 +381,10 @@ at [tom@punkave.com](mailto:tom@punkave.com). See also [www.punkave.com](http://
 further information about his work.
 
 ## Changelog ##
+
+### Version 1.03 ###
+
+Corrected some references to sfDoctrineApplyApplyForm et al.
 
 ### Version 1.02 ###
 
