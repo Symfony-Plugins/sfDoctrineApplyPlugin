@@ -324,6 +324,10 @@ via `app.yml`:
         sfApplySettingsForm_class: mySettingsFormClass
         # Password reset form class
         sfApplyResetForm_class: myResetFormClass
+        # Password reset request form class
+        sfApplyResetRequestForm_class: myResetRequestFormClass
+        
+Tip: don't forget to `symfony cc` after changes of this kind.
 
 If you subclass our form classes, *be sure to call*
 `parent::configure()` at the beginning of *your* configure method.
@@ -385,6 +389,7 @@ further information about his work.
 ### Version 1.03 ###
 
 Corrected some references to sfDoctrineApplyApplyForm et al.
+Added a reference to sfApplyResetRequestForm.
 
 ### Version 1.02 ###
 
