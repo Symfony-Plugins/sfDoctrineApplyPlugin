@@ -16,7 +16,8 @@ EOM
 <ul>
 <?php echo $form ?>
 <li>
-<input type="submit" value="<?php echo __("Reset My Password") ?>">, or 
+<input type="submit" value="<?php echo __("Reset My Password") ?>"> 
+<?php echo __("or") ?> 
 <?php echo link_to(__('Cancel'), sfConfig::get('app_sfApplyPlugin_after', '@homepage')) ?>
 </li>
 </ul>
