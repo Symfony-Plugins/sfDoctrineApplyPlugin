@@ -23,21 +23,14 @@ class BasesfApplyActions extends sfActions
         $this->form->save();
         try
         {
-          // Create the mailer and message objects
-          $mailer = $this->getMailer();
-          $message = new Swift_Message(
-            sfConfig::get('app_sfApplyPlugin_apply_subject',
-              "Please verify your account on " . $request->getHost()));
-         
-          // Render message parts
           $profile = $this->form->getObject();
-          $mailContext = array('name' => $profile->getFullname(),
-            'validate' => $profile->getValidate());
-          $message->attach(new Swift_Message_Part($this->getPartial('sfApply/sendValidateNew', $mailContext), 'text/html'));
-          $message->attach(new Swift_Message_Part($this->getPartial('sfApply/sendValidateNewText', $mailContext), 'text/plain'));
-          $address = $this->getFromAddress();
-          $mailer->send($message, $profile->getEmail(), $address);
-          $mailer->disconnect();
+          $this->mail(array('subject' => sfConfig::get('app_sfApplyPlugin_apply_subject',
+              sfContext::getInstance()->getI18N()->__("Please verify your account on %1%", array('%1%' => $this->getRequest()->getHost()))),
+            'fullname' => $profile->getFullname(),
+            'email' => $profile->getEmail(),
+            'parameters' => array('fullname' => $profile->getFullname(), 'validate' => $profile->getValidate()),
+            'text' => 'sfApply/sendValidateNewText',
+            'html' => 'sfApply/sendValidateNew'));
           return 'After';
         }
         catch (Exception $e)
@@ -52,6 +45,30 @@ class BasesfApplyActions extends sfActions
         }
       }
     }
+  }
+
+  // Hate Zend_Mail? Override me
+  protected function mail($options)
+  {
+    $required = array('subject', 'parameters', 'email', 'fullname', 'html', 'text');
+    foreach ($required as $option)
+    {
+      if (!isset($options[$option]))
+      {
+        throw new sfException("Required option $option not supplied to sfApply::mail");
+      }
+    }
+    $transport = $this->getMailTransport();
+    $message = new Zend_Mail();
+    $message->setSubject($options['subject']);
+
+    // Render message parts
+    $message->setBodyHtml($this->getPartial($options['html'], $options['parameters']), 'text/html');
+    $message->setBodyText($this->getPartial($options['text'], $options['parameters']), 'text/plain');
+    $address = $this->getFromAddress();
+    $message->setFrom($address['email'], $address['fullname']);
+    $message->addTo($options['email'], $options['fullname']);
+    $message->send($transport);
   }
   
   public function executeResetRequest(sfRequest $request)
@@ -87,18 +104,14 @@ class BasesfApplyActions extends sfActions
     $profile->setValidate('r' . self::createGuid());
     $profile->save();
 
-    // Create the mailer and message objects
-    $mailer = $this->getMailer();
-    $message = new Swift_Message(sfConfig::get('app_sfApplyPlugin_reset_subject', sfContext::getInstance()->getI18N()->__("Please verify your password reset request on %1%", array('%1%' => $this->getRequest()->getHost()))));
-
-    // Render message parts
-    $mailContext = array('name' => $profile->getFullname(),
-      'validate' => $profile->getValidate());
-    $message->attach(new Swift_Message_Part($this->getPartial('sfApply/sendValidateReset', $mailContext), 'text/html'));
-    $message->attach(new Swift_Message_Part($this->getPartial('sfApply/sendValidateResetText', $mailContext), 'text/plain'));
-    $address = $this->getFromAddress();
-    $mailer->send($message, $profile->getEmail(), $this->getFromAddress());
-    $mailer->disconnect();
+    $this->mail(array('subject' => sfConfig::get('app_sfApplyPlugin_reset_subject',
+        sfContext::getInstance()->getI18N()->__("Please verify your password reset request on %1%", array('%1%' => $this->getRequest()->getHost()))),
+      'fullname' => $profile->getFullname(),
+      'email' => $profile->getEmail(),
+      'parameters' => array('fullname' => $profile->getFullname(), 'validate' => $profile->getValidate()),
+      'text' => 'sfApply/sendValidateResetText',
+      'html' => 'sfApply/sendValidateReset'));
+      
     return 'After';
   }
 
@@ -109,8 +122,8 @@ class BasesfApplyActions extends sfActions
     {
       throw new Exception('app_sfApplyPlugin_from is not set');
     }
-    $address = new Swift_Address($from['email'], sfContext::getInstance()->getI18N()->__($from['fullname']));
-    return $address;
+    // i18n the full name
+    return array('email' => $from['email'], 'fullname' => sfContext::getInstance()->getI18N()->__($from['fullname']));
   }
 
   public function executeConfirm(sfRequest $request)
@@ -146,8 +159,7 @@ class BasesfApplyActions extends sfActions
     }
     if ($type == 'Reset')
     {
-      $this->getUser()->setAttribute('Reset', 
-        $sfGuardUser->getId(), 'sfApplyPlugin');
+      $this->getUser()->setAttribute('sfApplyReset', $sfGuardUser->getId());
       return $this->redirect('sfApply/reset');
     }
   }
@@ -160,8 +172,7 @@ class BasesfApplyActions extends sfActions
       $this->form->bind($request->getParameter('sfApplyReset'));
       if ($this->form->isValid())
       {
-        $this->id = $this->getUser()->getAttribute(
-          'Reset', false, 'sfApplyPlugin', false);
+        $this->id = $this->getUser()->getAttribute('sfApplyReset', false);
         $this->forward404Unless($this->id);
         $this->sfGuardUser = Doctrine::getTable('sfGuardUser')->find($this->id);
         $this->forward404Unless($this->sfGuardUser);
@@ -169,8 +180,7 @@ class BasesfApplyActions extends sfActions
         $sfGuardUser->setPassword($this->form->getValue('password'));
         $sfGuardUser->save();
         $this->getUser()->signIn($sfGuardUser);
-        $this->getUser()->setAttribute(
-          'Reset', null, 'sfApplyPlugin');
+        $this->getUser()->setAttribute('sfApplyReset', null);
         return 'After';
       }
     }
@@ -178,8 +188,7 @@ class BasesfApplyActions extends sfActions
 
   public function executeResetCancel()
   {
-    $this->getUser()->setAttribute(
-      'Reset', null, 'sfApplyPlugin');
+    $this->getUser()->setAttribute('sfApplyReset', null);
     return $this->redirect('@homepage'); 
   }
 
@@ -240,49 +249,58 @@ class BasesfApplyActions extends sfActions
 
   // There's a lot here. Symfony could benefit from a standard convenience
   // class with a method like this one.
-  protected function getMailer()
+  protected function getMailTransport()
   {
-    $type = sfConfig::get('app_sfApplyPlugin_mailer_type', 'NativeMail');
-    $class = 'Swift_Connection_' . $type;
-    $connection = new $class;
+    // sfDoctrineApplyPlugin 1.1 uses Zend_Mail instead of SwiftMailer. SwiftMailer 3.0 is
+    // unsupported at this point, and rather than upgrade to 4.0, we're choosing to go with
+    // a framework that we already use for search. Fewer dependencies = better
 
-    if ($type === 'SMTP')
+    // Example:
+    //
+    // all:
+    //   sfApply:
+    //     mail_transport_class: Zend_Mail_Transport_Smtp
+    //     mail_transport_host: smtp.example.com
+    //     mail_transport_options:
+    //       ssl: tls # Enable SSL
+    //
+    // See also:
+    //
+    // http://framework.zend.com/manual/en/zend.mail.smtp-secure.html
+    // http://micrub.info/2008/09/22/sending-email-with-zend_mail-using-gmail-smtp-services/
+    //
+    // Or just use the default mailer by not configuring these options at all.
+      
+    $this->registerZend();
+      
+    $class = sfConfig::get('app_sfApplyPlugin_mail_transport_class', null);
+    $host = sfConfig::get('app_sfApplyPlugin_mail_transport_host', null);
+    $options = sfConfig::get('app_sfApplyPlugin_mail_transport_options', null);
+    if (($class === null) && ($options === null) && ($host === null))
     {
-      $encryption = sfConfig::get('app_sfApplyPlugin_mailer_smtp_encryption', false);
-      if ($encryption !== false)
-      {
-        $encryption = constant("Swift_Connection_SMTP::$encryption");
-      }
-      else
-      {
-        $encryption = null;
-      }
-      $port = sfConfig::get('app_sfApplyPlugin_mailer_port', null);
-
-      // Allow use of constants like PORT_SECURE in app.yml
-
-      if ((!is_null($port)) && (!preg_match("/^\d+$/", $port)))
-      {
-        $port = constant("Swift_Connection_SMTP::$port");
-      }
-
-      $connection = new Swift_Connection_SMTP(
-        sfConfig::get('app_sfApplyPlugin_mailer_host', null),
-        $port,
-        $encryption);
+      // This actually works - Zend_Mail will accept null and use the default transport
+      return null;
     }
-    $username = sfConfig::get('app_sfApplyPlugin_mailer_smtp_username', false);
-    $password = sfConfig::get('app_sfApplyPlugin_mailer_smtp_password', false);
-    if ($username !== false)
+    $transport = new $class($host, $options);
+    return $transport;
+  }
+  
+  static private $zendLoaded = false;
+  
+  public function registerZend()
+  {
+    if (self::$zendLoaded)
     {
-      $connection->setUsername($username);
+      return;
     }
-    if ($password !== false)
-    {
-      $connection->setPassword($password);
-    }
-    $mailer = new Swift($connection);
-    return $mailer;
+    
+    # Zend 1.8.0 and thereafter 
+    include_once('Zend/Loader/Autoloader.php');
+    $loader = Zend_Loader_Autoloader::getInstance();
+    $loader->setFallbackAutoloader(true);
+    $loader->suppressNotFoundWarnings(false);
+  
+    self::$zendLoaded = true;
   }
 
   // A convenience method to instantiate a form of the

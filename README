@@ -14,19 +14,29 @@ correctly and also requires users to confirm via email. This prevents a
 user who has discovered a momentarily unattended PC from 
 taking over the account too easily.
 
+## IMPORTANT Upgrade Notes ##
+
+Beginning with sfDoctrineApplyPlugin version 1.1, the following significant change has been made:
+
+We now use Zend Mail instead of SwiftMailer. We did this because SwiftMailer 3.0 was replaced
+by a non-backwards-compatible new release, and we already use the Zend Framework in our projects.
+Fewer dependencies = good. Apart from the need to install Zend and include its autoloader in
+your `config/ProjectConfiguration.class.php` file if you are not installing it system-wide (see below), you won't notice this change much 
+unless you are using custom mailer settings for SSL, etc. Those settings have changed a bit (see below). If you hate this,
+you can override the `mail()` method of the `sfApplyActions` class at the application level.
+
 ## Requirements ##
 
 You need:
 
 * Symfony 1.2
 
-* sfDoctrineGuardPlugin
+* sfDoctrineGuardPlugin, installed and configured per the documentation
 
 * Doctrine 
 
-* SwiftMailer (see this 
-[Symfony 
-Cookbook article](http://www.symfony-project.org/cookbook/1_2/en/email) for installation instructions)
+* [Zend framework](http://framework.zend.com/) (the minimal edition will do), version 1.8.0 or better, as a mail delivery system; 
+override the `mail()` method of the sfApplyActions class if you don't like it
 
 A Symfony 1.0-plus-Propel version of this plugin is also available
 separately as sfApplyPlugin.
@@ -36,6 +46,16 @@ separately as sfApplyPlugin.
 Read the sfDoctrineGuardPlugin documentation first! Set up that plugin before
 continuing.
 
+Install the Zend Framework, version 1.8.0 or better, if you have not already done so. If you choose to install the framework
+system-wide you shouldn't need any custom code to enable it. If you choose to put it in
+your project's `lib/vendor/Zend` folder, add the following to
+the `setup()` method of your `ProjectConfiguration` class:
+
+		// We do this here because we chose to put Zend in lib/vendor/Zend.
+		// If it is installed system-wide then this isn't necessary to
+		// enable Zend Mail
+		set_include_path(sfConfig::get('sf_lib_dir') . '/vendor' . PATH_SEPARATOR . get_include_path());
+        
 Then add the following to your `doctrine/schema.yml`:
 
     sfGuardUserProfile:
@@ -81,14 +101,10 @@ that might be nice. In practice, before you know it you'll be joining
 28 tables every time someone accesses the page. Paste this one
 snippet of code just once instead. You'll be happier in the long run.
 
-Doctrine note: since Doctrine supports column aggregation inheritance,
-it would also be possible for me to implement a Doctrine class from which you
-inherit to add your own fields. While this is a good idea in many ways, 
-many applications have an existing sfGuardUserProfile class and their 
-developers are probably going to be happier just adding my handful of fields.
-A REALLY big improvement would be for sfDoctrineGuard itself to endorse
-column aggregation inheritance and not have a separate user
-profile class at all. But anyway.
+Doctrine note: since Doctrine supports inheritance, it should be
+possible to eliminate sfGuardUserProfile entirely and just use
+inheritance to assert the need for extra columsn in sfGuardUser. We may
+do this in a future release.
 
 You will also want to add the following routes to your `config/routing.yml`.
 The URLs are just suggestions, you can change them if you don't like them.
@@ -162,30 +178,35 @@ options! The plugin will fail with a less than informative error message
 My apologies for leaving this rather important information out of the
 documentation of the earliest versions.
 
-SwiftMailer supports several means of delivery. By default, 
-sfDoctrineApplyPlugin uses the NativeMail back end. If this is not what
-you want, you can specify a different SwiftMailer back end:
+Prior to version 1.1, sfDoctrineApplyPlugin used SwiftMailer. SwiftMailer 3.0
+has been abandoned, the 4.0 API is different, and our projects already use
+the Zend framework, which offers a good mailer implementation in the
+`Zend_Mail` class. So we have switched to Zend Mail. 
+
+By default, sfDoctrineApplyPlugin uses Zend Mail's default transport.
+You can easily configure the default transport application-wide via
+your ProjectConfiguration class; see the Zend Mail documentation for more
+information. Alternatively you can configure sfDoctrineApplyPlugin to use
+a specific transport class, specify a host, and specify additional options.
+For instance, these settings are appropriate for gmail:
 
       sfApplyPlugin:
-        from:
-          email: "your@emailaddress.com"
-          fullname: "the staff at yoursite.com"
-        mailer_type: "SMTP"
+				# The default transport class, set explicitly as an example.
+				# This doesn't change often
+				mail_transport_class: Zend_Mail_Transport_Smtp
+				# Not the default
+				mail_transport_host: smtp.gmail.com
+				# Not the defaults either
+				mail_transport_options:
+					auth: login
+					username: your@gmail.com
+					password: 'your_gmail_password'
+					ssl: tls
+					port: 587
 
-If you are using the SMTP backend, you can also enable encryption and
-specify a mailer host and port:
-
-      sfApplyPlugin:
-        from:
-          email: "your@emailaddress.com"
-          fullname: "the staff at yoursite.com"
-        mailer_type: "SMTP"
-        mailer_smtp_encryption: true
-        mailer_host: my.mailer.host
-        mailer_port: 25
-
-For a complete list of connection classes supported by SwiftMailer, 
-see the [SwiftMailer documentation](http://www.swiftmailer.org/wikidocs/).
+The `mail_transport_host` option becomes the first parameter to 
+the transport class constructor, and the `mail_transport_options` array
+becomes the second parameter. 
 
 Now that you have configured the plugin, you can easily add a link to your 
 pages sending users to `sfApply/apply` to request accounts:
