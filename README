@@ -16,6 +16,27 @@ taking over the account too easily.
 
 ## IMPORTANT Upgrade Notes ##
 
+Beginning with sfDoctrineApplyPlugin version 1.1, the following security fix has been made:
+
+1. Usernames are only permitted to contain letters, digits, and underscores.
+
+2. Full names are not permitted to contain <, >, &, or |.
+
+This means that it is safe to echo usernames and full names without further entity escaping. Many developers are accustomed to the idea that usernames are safe, and we wanted to meet this expectation and avoid creating potential security problems.
+
+*If you are already running sfDoctrineApplyPlugin*, run this task to clean your usernames and full names:
+
+./symfony sfDoctrineApply:clean-names
+
+Of course, altering usernames prevents users from logging in. Fortunately this task generates a report with
+sufficient information to allow you to contact the affected users and inform them of the change. Most users
+are accustomed to choosing legitimate "username-like" usernames and will not be affected.
+
+"I understand why you forbid <, > and & in full names, but why |?" We forbid | because it is a part of our preferred 
+microformat for lists of disambiguated full names in sfGuard-based applications:
+
+		Full Name (username) | Full Name (username) | Full Name (username)
+
 Beginning with sfDoctrineApplyPlugin version 1.1, the following significant change has been made:
 
 We now use Zend Mail instead of SwiftMailer. We did this because SwiftMailer 3.0 was replaced

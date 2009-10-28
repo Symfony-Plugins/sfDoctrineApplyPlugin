@@ -78,12 +78,19 @@ class sfApplyApplyForm extends sfGuardUserProfileForm
           'min_length' => 4,
           'max_length' => 16
         )),
+        // Usernames should be safe to output without escaping and generally username-like.
+        new sfValidatorRegex(array(
+          'pattern' => '/^\w+$/'
+        ), array('invalid' => 'Usernames must contain only letters, numbers and underscores.')),
         new sfValidatorDoctrineUnique(array(
           'model' => 'sfGuardUser',
           'column' => 'username'
         ), array('invalid' => 'There is already a user by that name. Choose another.'))
       ))
     );
+    
+    // Passwords are never printed - ever - except in the context of Symfony form validation which has built-in escaping.
+    // So we don't need a regex here to limit what is allowed
     
     $this->setValidator('password', new sfValidatorString(array(
       'required' => true,
@@ -98,6 +105,11 @@ class sfApplyApplyForm extends sfGuardUserProfileForm
       'min_length' => 6,
       'max_length' => 128
     )));
+
+    // Be aware that sfValidatorEmail doesn't guarantee a string that is preescaped for HTML purposes.
+    // If you choose to echo the user's email address somewhere, make sure you escape entities.
+    // <, > and & are rare but not forbidden due to the "quoted string in the local part" form of email address
+    // (read the RFC if you don't believe me...).
     
     $this->setValidator('email', new sfValidatorAnd(array(
       new sfValidatorEmail(array('required' => true, 'trim' => true)),
@@ -112,12 +124,19 @@ class sfApplyApplyForm extends sfGuardUserProfileForm
       'required' => true,
       'trim' => true
     )));
-    
-    $this->setValidator('fullname', new sfValidatorString(array(
-      'required' => true,
-      'trim' => true,
-      'min_length' => 6,
-      'max_length' => 128
+
+    // Disallow <, >, & and | in full names. We forbid | because 
+    // it is part of our preferred microformat for lists of disambiguated
+    // full names in sfGuard apps: Full Name (username) | Full Name (username) | Full Name (username)
+    $this->setValidator('fullname', new sfValidatorAnd(array(
+      new sfValidatorString(array(
+        'required' => true,
+        'trim' => true,
+        'min_length' => 6,
+        'max_length' => 128)),
+        new sfValidatorRegex(array(
+          'pattern' => '/^[^<>&\|]+$/',
+        ), array('invalid' => 'Full names may not contain &lt;, &gt;, | or &amp;.'))
     )));
     
     $schema = $this->validatorSchema;
