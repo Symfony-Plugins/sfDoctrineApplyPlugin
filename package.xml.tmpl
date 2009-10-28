@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<package packagerversion="1.7.1" version="2.0" xmlns="http://pear.php.net/dtd/package-2.0" xmlns:tasks="http://pear.php.net/dtd/tasks-1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://pear.php.net/dtd/tasks-1.0 http://pear.php.net/dtd/tasks-1.0.xsd  http://pear.php.net/dtd/package-2.0 http://pear.php.net/dtd/package-2.0.xsd">
+ <name>sfDoctrineApplyPlugin</name>
+ <channel>pear.symfony-project.com</channel>
+ <summary>Allows users to apply for accounts</summary>
+ <description>Allows users of a site protected by sfDoctrineGuardPlugin to create new accounts, verifying them by email. Both account creation and password changes require email verification as a speed bump to slow down spammers.</description>
+ <lead>
+  <name>Tom Boutell</name>
+  <user>boutell</user>
+  <email>tom@punkave.com</email>
+  <active>yes</active>
+ </lead>
+ <lead>
+   <name>Alex Gilbert</name>
+   <user>agilbert</user>
+   <email>alex@punkave.com</email>
+   <active>yes</active>
+ </lead>
+ <developer>
+   <name>John Benson</name>
+   <user>johnnyoffline</user>
+   <email>johnny@punkave.com</email>
+   <active>yes</active>
+ </developer>
+ <developer>
+   <name>Rick Banister</name>
+   <user>rickybanister</user>
+   <email>rick@punkave.com</email>
+   <active>yes</active>
+ </developer>
+ <date>##CURRENT_DATE##</date>
+ <version>
+   <release>##PLUGIN_VERSION##</release>
+   <api>##API_VERSION##</api>
+ </version>
+ <stability>
+   <release>##STABILITY##</release>
+   <api>##STABILITY##</api>
+ </stability>
+ <license uri="http://www.symfony-project.org/license">MIT license</license>
+ <notes>-</notes>
+ <contents>
+   ##CONTENTS##
+ </contents> <dependencies>
+  <required>
+   <php>
+    <min>5.0.0</min>
+   </php>
+   <pearinstaller>
+    <min>1.4.1</min>
+   </pearinstaller>
+   <package>
+    <name>symfony</name>
+    <channel>pear.symfony-project.com</channel>
+    <min>1.2.0</min>
+    <max>1.4.0</max>
+    <exclude>1.4.0</exclude>
+   </package>
+  </required>
+ </dependencies>
+ <phprelease />
+ <changelog>
+  <release>
+    <version>
+      <release>1.1.0</release>
+      <api>1.1.0</api>
+    </version>
+    <stability>
+      <release>stable</release>
+      <api>stable</api>
+    </stability>
+    <license uri="http://www.symfony-project.org/license">MIT license</license>
+    <date>2009-10-28</date>
+    <notes>Uses Zend Mailer, but also provides a way to override that. Usernames are now strictly limited to "^\w+$". &lt;, &gt;, &amp; and | are forbidden in full names.</notes>
+  </release>
+  <release>
+    <version>
+      <release>1.0.1</release>
+      <api>1.0.0</api>
+    </version>
+    <stability>
+      <release>stable</release>
+      <api>stable</api>
+    </stability>
+    <license uri="http://www.symfony-project.org/license">MIT license</license>
+    <date>2009-03-06</date>
+    <notes>Corrected reference to sfDoctrineGuardPlugin (for real this time).</notes>
+  </release>
+  <release>
+    <version>
+      <release>1.0.0</release>
+      <api>1.0.0</api>
+    </version>
+    <stability>
+      <release>stable</release>
+      <api>stable</api>
+    </stability>
+    <license uri="http://www.symfony-project.org/license">MIT license</license>
+    <date>2009-03-06</date>
+    <notes>First stable release. All recent changes have been related to documentation or packaging.</notes>
+  </release>
+ </changelog>
+</package>
