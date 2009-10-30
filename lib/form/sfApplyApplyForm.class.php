@@ -92,12 +92,14 @@ class sfApplyApplyForm extends sfGuardUserProfileForm
     // Passwords are never printed - ever - except in the context of Symfony form validation which has built-in escaping.
     // So we don't need a regex here to limit what is allowed
     
+    // Don't print passwords when complaining about inadequate length
     $this->setValidator('password', new sfValidatorString(array(
       'required' => true,
       'trim' => true,
       'min_length' => 6,
       'max_length' => 128
-    )));
+    ), array(
+      'min_length' => 'That password is too short. It must contain a minimum of %min_length% characters.')));
         
     $this->setValidator('password2', new sfValidatorString(array(
       'required' => true,
