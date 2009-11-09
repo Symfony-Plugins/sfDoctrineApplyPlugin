@@ -106,7 +106,8 @@ class sfApplyApplyForm extends sfGuardUserProfileForm
       'trim' => true,
       'min_length' => 6,
       'max_length' => 128
-    )));
+    ), array(
+      'min_length' => 'That password is too short. It must contain a minimum of %min_length% characters.')));
 
     // Be aware that sfValidatorEmail doesn't guarantee a string that is preescaped for HTML purposes.
     // If you choose to echo the user's email address somewhere, make sure you escape entities.
