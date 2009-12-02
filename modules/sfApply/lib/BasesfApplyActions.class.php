@@ -297,7 +297,8 @@ class BasesfApplyActions extends sfActions
     # Zend 1.8.0 and thereafter 
     include_once('Zend/Loader/Autoloader.php');
     $loader = Zend_Loader_Autoloader::getInstance();
-    $loader->setFallbackAutoloader(true);
+    // Zend should NOT be the fallback autoloader, that gets in Symfony's way and generates warnings in 1.3
+    $loader->setFallbackAutoloader(false);
     $loader->suppressNotFoundWarnings(false);
   
     self::$zendLoaded = true;
