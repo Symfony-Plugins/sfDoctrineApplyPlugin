@@ -24,13 +24,7 @@ class BasesfApplyActions extends sfActions
         try
         {
           $profile = $this->form->getObject();
-          $this->mail(array('subject' => sfConfig::get('app_sfApplyPlugin_apply_subject',
-              sfContext::getInstance()->getI18N()->__("Please verify your account on %1%", array('%1%' => $this->getRequest()->getHost()))),
-            'fullname' => $profile->getFullname(),
-            'email' => $profile->getEmail(),
-            'parameters' => array('fullname' => $profile->getFullname(), 'validate' => $profile->getValidate()),
-            'text' => 'sfApply/sendValidateNewText',
-            'html' => 'sfApply/sendValidateNew'));
+          $this->sendVerificationMail($profile);
           return 'After';
         }
         catch (Exception $e)
@@ -71,6 +65,20 @@ class BasesfApplyActions extends sfActions
     $message->send($transport);
   }
   
+  // apply uses this. Password reset also uses it in the case of a user who
+  // was never verified to begin with
+  
+  protected function sendVerificationMail($profile)
+  {
+    $this->mail(array('subject' => sfConfig::get('app_sfApplyPlugin_apply_subject',
+        sfContext::getInstance()->getI18N()->__("Please verify your account on %1%", array('%1%' => $this->getRequest()->getHost()))),
+      'fullname' => $profile->getFullname(),
+      'email' => $profile->getEmail(),
+      'parameters' => array('fullname' => $profile->getFullname(), 'validate' => $profile->getValidate()),
+      'text' => 'sfApply/sendValidateNewText',
+      'html' => 'sfApply/sendValidateNew'));
+  }
+  
   public function executeResetRequest(sfRequest $request)
   {
     $user = $this->getUser();
@@ -88,8 +96,10 @@ class BasesfApplyActions extends sfActions
         $this->form->bind($request->getParameter('sfApplyResetRequest'));
         if ($this->form->isValid())
         {
-          $user = sfGuardUserTable::retrieveByUsername(
-            $this->form->getValue('username'));
+          // The form matches unverified users, but retrieveByUsername does not, so
+          // use an explicit query. We'll special-case the unverified users in
+          // resetRequestBody
+          $user = Doctrine::getTable('sfGuardUser')->createQuery('u')->where('username = ?', $this->form->getValue('username'))->fetchOne();
           return $this->resetRequestBody($user);
         }
       }
@@ -99,19 +109,47 @@ class BasesfApplyActions extends sfActions
   public function resetRequestBody($user)
   {
     $this->forward404Unless($user);
-
     $profile = $user->getProfile();
+
+    if (!$user->getIsActive())
+    {
+      $type = $this->getValidationType($profile->getValidate());
+      if ($type === 'New')
+      {
+        try 
+        {
+          $this->sendVerificationMail($profile);
+        }
+        catch (Exception $e)
+        {
+          return 'UnverifiedMailerError';
+        }
+        return 'Unverified';
+      }
+      elseif ($type === 'Reset')
+      {
+        // They lost their first password reset email. That's OK. let them try again
+      }
+      else
+      {
+        return 'Locked';
+      }
+    }
     $profile->setValidate('r' . self::createGuid());
     $profile->save();
-
-    $this->mail(array('subject' => sfConfig::get('app_sfApplyPlugin_reset_subject',
-        sfContext::getInstance()->getI18N()->__("Please verify your password reset request on %1%", array('%1%' => $this->getRequest()->getHost()))),
-      'fullname' => $profile->getFullname(),
-      'email' => $profile->getEmail(),
-      'parameters' => array('fullname' => $profile->getFullname(), 'validate' => $profile->getValidate()),
-      'text' => 'sfApply/sendValidateResetText',
-      'html' => 'sfApply/sendValidateReset'));
-      
+    try
+    {
+      $this->mail(array('subject' => sfConfig::get('app_sfApplyPlugin_reset_subject',
+          sfContext::getInstance()->getI18N()->__("Please verify your password reset request on %1%", array('%1%' => $this->getRequest()->getHost()))),
+        'fullname' => $profile->getFullname(),
+        'email' => $profile->getEmail(),
+        'parameters' => array('fullname' => $profile->getFullname(), 'validate' => $profile->getValidate()),
+        'text' => 'sfApply/sendValidateResetText',
+        'html' => 'sfApply/sendValidateReset'));
+    } catch (Exception $e)
+    {
+      return 'MailerError';
+    }
     return 'After';
   }
 
@@ -189,7 +227,7 @@ class BasesfApplyActions extends sfActions
   public function executeResetCancel()
   {
     $this->getUser()->setAttribute('sfApplyReset', null);
-    return $this->redirect('@homepage'); 
+    return $this->redirect(sfConfig::get('app_sfApplyPlugin_after', '@homepage'));
   }
 
   public function executeSettings(sfRequest $request)

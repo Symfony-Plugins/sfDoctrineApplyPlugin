@@ -24,4 +24,5 @@ for a new account.
 </p>
 EOM
 ) ?>
+<?php include_partial('sfApply/continue') ?>
 </div>

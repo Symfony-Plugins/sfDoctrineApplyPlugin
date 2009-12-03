@@ -164,6 +164,14 @@ an @homepage route and various "Continue" links point there. If you
 don't have such a route or don't like that destination, set
 `app_sfDoctrineApplyPlugin_after` to the route of your choice.
 
+We have also added `app_sfDoctrineApplyPlugin_afterLogin`. If the user
+is authenticated and this value is set, it will be used in preference
+to `app_sfDoctrineApplyPlugin_after`. This is more suitable if your goal
+is to send users who have successfully confirmed their accounts
+to a particular destination, rather than sending all "Continue" buttons there,
+even those for failure messages and partial success messages like those displayed
+after a confirmation email is sent.
+
 If you have enabled the built-in routes in sfGuardPlugin, 
 then overriding `sf_guard_password` here might not work. You can
 fix that by copying `sfGuardPlugin/modules/sfGuardAuth/templates/loginSuccess.php`

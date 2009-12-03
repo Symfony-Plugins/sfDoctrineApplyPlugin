@@ -3,7 +3,5 @@
 <p>
 <?php echo __("Thank you for confirming your account! You are now logged into the site.") ?>
 </p>
-<p>
-<?php echo link_to(__("Continue"), sfConfig::get('app_sfApplyPlugin_after', '@homepage')) ?>
-</p>
+<?php include_partial('sfApply/continue') ?>
 </div>

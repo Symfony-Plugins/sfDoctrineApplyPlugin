@@ -8,7 +8,5 @@ your "spam" or "bulk" folder.
 EOM
 )) ?>
 </p>
-<p>
-<?php echo link_to(__("Continue"), sfConfig::get('app_sfApplyPlugin_after', '@homepage')) ?>
-</p>
+<?php include_partial('sfApply/continue') ?>
 </div>
