@@ -50,8 +50,8 @@ class sfApplyApplyForm extends sfGuardUserProfileForm
     $this->widgetSchema->setLabels(array('password2' => 'Confirm Password'));
 
     $email = $this->getWidget('email');
-
-    $this->setWidget('email2', new sfWidgetFormInput(
+    $class = get_class($email);
+    $this->setWidget('email2', new $class(
       array(), array('maxlength' => $email->getAttribute('maxlength'))
     ));
     
