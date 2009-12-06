@@ -41,7 +41,7 @@ Beginning with sfDoctrineApplyPlugin version 1.1, the following significant chan
 
 We now use Zend Mail instead of SwiftMailer. We did this because SwiftMailer 3.0 was replaced
 by a non-backwards-compatible new release, and we already use the Zend Framework in our projects.
-Fewer dependencies = good. Apart from the need to install Zend and include its autoloader in
+Fewer dependencies = good. Apart from the need to install Zend and add it to your include path via 
 your `config/ProjectConfiguration.class.php` file if you are not installing it system-wide (see below), you won't notice this change much 
 unless you are using custom mailer settings for SSL, etc. Those settings have changed a bit (see below). If you hate this,
 you can override the `mail()` method of the `sfApplyActions` class at the application level.
