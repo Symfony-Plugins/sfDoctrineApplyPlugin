@@ -6,19 +6,23 @@ class sfApplyResetRequestForm extends sfForm
   {
     parent::configure();
 
-    $this->setWidget('username',
+    $this->setWidget('username_or_email',
       new sfWidgetFormInput(
-        array(), array('maxlength' => 16)));
+        array(), array('maxlength' => 100)));
 
-    $this->setValidator('username',
-      new sfValidatorAnd(
+    $this->setValidator('username_or_email',
+      new sfValidatorOr(
         array(
-          new sfValidatorString(array('required' => true,
-            'trim' => true,
-            'min_length' => 4,
-            'max_length' => 16)),
-          new sfValidatorDoctrineChoice(array('model' => 'sfGuardUser',
-            'column' => 'username'), array("invalid" => "There is no such user.")))));
+          new sfValidatorAnd(
+            array(
+              new sfValidatorString(array('required' => true,
+                'trim' => true,
+                'min_length' => 4,
+                'max_length' => 16)),
+              new sfValidatorDoctrineChoice(array('model' => 'sfGuardUser',
+                'column' => 'username'), array("invalid" => "There is no such user.")))),
+          new sfValidatorEmail(array('required' => true)))));
+        
     $this->widgetSchema->setNameFormat('sfApplyResetRequest[%s]');
     $this->widgetSchema->setFormFormatterName('list');
   }

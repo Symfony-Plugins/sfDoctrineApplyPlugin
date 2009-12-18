@@ -99,7 +99,17 @@ class BasesfApplyActions extends sfActions
           // The form matches unverified users, but retrieveByUsername does not, so
           // use an explicit query. We'll special-case the unverified users in
           // resetRequestBody
-          $user = Doctrine::getTable('sfGuardUser')->createQuery('u')->where('username = ?', $this->form->getValue('username'))->fetchOne();
+          
+          $username_or_email = $this->form->getValue('username_or_email');
+          if (strpos($username_or_email, '@') !== false)
+          {
+            $user = Doctrine::getTable('sfGuardUser')->createQuery('u')->innerJoin('u.Profile p')->where('p.email = ?', $username_or_email)->fetchOne();
+            
+          }
+          else
+          {
+            $user = Doctrine::getTable('sfGuardUser')->createQuery('u')->where('username = ?', $username_or_email)->fetchOne();
+          }
           return $this->resetRequestBody($user);
         }
       }
@@ -108,6 +118,10 @@ class BasesfApplyActions extends sfActions
 
   public function resetRequestBody($user)
   {
+    if (!$user)
+    {
+      return 'NoSuchUser';
+    }
     $this->forward404Unless($user);
     $profile = $user->getProfile();
 
@@ -143,7 +157,7 @@ class BasesfApplyActions extends sfActions
           sfContext::getInstance()->getI18N()->__("Please verify your password reset request on %1%", array('%1%' => $this->getRequest()->getHost()))),
         'fullname' => $profile->getFullname(),
         'email' => $profile->getEmail(),
-        'parameters' => array('fullname' => $profile->getFullname(), 'validate' => $profile->getValidate()),
+        'parameters' => array('fullname' => $profile->getFullname(), 'validate' => $profile->getValidate(), 'username' => $user->getUsername()),
         'text' => 'sfApply/sendValidateResetText',
         'html' => 'sfApply/sendValidateReset'));
     } catch (Exception $e)

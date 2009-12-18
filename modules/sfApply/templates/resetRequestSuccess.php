@@ -6,10 +6,9 @@
   name="sf_apply_reset_request" id="sf_apply_reset_request">
 <p>
 <?php echo __(<<<EOM
-Forgot your password? No problem! Just enter your username and
-click "Reset My Password." A link permitting you to change
-your password will then be sent to the email address associated with the
-account.
+Forgot your username or password? No problem! Just enter your username <strong>or</strong>
+your email address and click "Reset My Password." You will receive an email message containing both your username and
+a link permitting you to change your password if you wish.
 EOM
 ) ?>
 </p>
