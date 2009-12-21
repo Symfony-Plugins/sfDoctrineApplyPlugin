@@ -1,11 +1,11 @@
 <?php use_helper('I18N', 'Url') ?>
 <?php echo __(<<<EOM
 <p>
-We have received your request to recover your username and possibly your password on 
-%1%.
+We have received your request to recover your username and possibly your password on: 
+%1%
 </p>
 <p>
-Your username is %USERNAME%.
+Your username is: %USERNAME%
 </p>
 <p>
 If you have lost your password or wish to reset it, just click on the link that follows:
