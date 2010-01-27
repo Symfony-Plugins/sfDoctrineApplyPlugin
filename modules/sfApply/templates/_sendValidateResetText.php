@@ -6,19 +6,14 @@ We have received your request to recover your username and possibly your passwor
 
 Your username is: %USERNAME%
 
-If you have lost your password or wish to reset it, just click on the link that follows:
+If you have lost your password or wish to reset it, click on the link that follows:
 
 %2%
 
 You will then be prompted for the new password you wish to use.
 
-Don't worry, your password will NOT be changed unless you click on the
-link above and complete the form. If you did not request this email you may
-safely ignore it.
-
-This confirmation process is necessary to prevent abuses of
-the system and protect your privacy. Thanks for your time and 
-for your patience with this process!
+Your password will NOT be changed unless you click on the
+link above and complete the form.
 EOM
 , array("%1%" => url_for($sf_request->getUriPrefix()),
   "%2%" => url_for("sfApply/confirm?validate=$validate", true),
