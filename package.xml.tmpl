@@ -53,13 +53,26 @@
     <name>symfony</name>
     <channel>pear.symfony-project.com</channel>
     <min>1.2.0</min>
-    <max>1.4.0</max>
-    <exclude>1.4.0</exclude>
+    <max>2.0.0</max>
+    <exclude>2.0.0</exclude>
    </package>
   </required>
  </dependencies>
  <phprelease />
  <changelog>
+   <release>
+     <version>
+       <release>1.1.1</release>
+       <api>1.1.1</api>
+     </version>
+     <stability>
+       <release>stable</release>
+       <api>stable</api>
+     </stability>
+     <license uri="http://www.symfony-project.org/license">MIT license</license>
+     <date>2010-02-02</date>
+     <notes>Users can now retrieve forgotten usernames, provided they know what email address was used to register. You can reset your password using either your email address or your username. PHP warning about retrieveByUsername has been fixed. Standard emails have been written to feel a little less "phishy" so they are not mistaken for spam, but you are still responsible for overriding the subject lines with something other than the hostname of your site. Documented 1.4 compatibility.</notes>
+  </release>
   <release>
     <version>
       <release>1.1.0</release>
