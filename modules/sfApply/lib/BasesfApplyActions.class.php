@@ -29,10 +29,10 @@ class BasesfApplyActions extends sfActions
         }
         catch (Exception $e)
         {
-          $mailer->disconnect();
           $profile = $this->form->getObject();
           $user = $profile->getUser();
           $user->delete();
+          throw $e;
             // You could re-throw $e here if you want to 
           // make it available for debugging purposes
           return 'MailerError';
