@@ -1,7 +1,7 @@
 Unless it is your goal to experience the joys of bleeding edge development, you should
 changes your svn:externals for sfDoctrineApplyPlugin to:
 
-http://svn.symfony-project.com/plugins/sfDoctrineApplyPlugin/branches/1.0
+http://svn.symfony-project.com/plugins/sfDoctrineApplyPlugin/branches/1.1
 
 That branch will receive only bugfixes and maintain the current "Zend Mailer and sfDoctrineGuardPlugin 1.4 compatibility" behavior you know and love.
 
