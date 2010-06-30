@@ -1,0 +1,10 @@
+Unless it is your goal to experience the joys of bleeding edge development, you should
+changes your svn:externals for sfDoctrineApplyPlugin to:
+
+http://svn.symfony-project.com/plugins/sfDoctrineApplyPlugin/branches/1.0
+
+That branch will receive only bugfixes and maintain the current "Zend Mailer and sfDoctrineGuardPlugin 1.4 compatibility" behavior you know and love.
+
+There is also a 1.2 branch which will use SwiftMailer and sfDoctrineGuardPlugin's current trunk, which has its own email address and full name fields and therefore doesn't necessarily require a separate profile table.
+
+We are leaving open the possibility of a 1.1 branch for "SwiftMailer and sfDoctrineGuardPlugin 1.4." Whether we ever bother with that depends on when Jon Wage releases a stable packaged version of the work that is currently in the trunk of sfDoctrineGuardPlugin.
